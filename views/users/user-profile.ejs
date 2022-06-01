@@ -1,0 +1,11 @@
+<h1>User page </h1>
+<% if(userInSession) { %>
+<p>Hello <%= userInSession.username %>! </p>
+<p>This is your profile page my friend!</p>
+  <button>
+    <a href="/user-profile">Reload the page</a>
+  </button>
+  <a href="/user-profile/main">Go to main page of the user</a>
+<% } else { %>
+  <p>Still no logged in user, sorry!</p>
+<% } %>

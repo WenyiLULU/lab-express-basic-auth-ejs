@@ -4,9 +4,16 @@ const { Schema, model } = require("mongoose");
 const userSchema = new Schema({
   username: {
     type: String,
+    required: true,
     unique: true
   },
-  password: String
+  password: String,
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match:[/^\S+@\S+\.\S+$/, 'Please use a valid email address.'],
+  }
 });
 
 const User = model("User", userSchema);
