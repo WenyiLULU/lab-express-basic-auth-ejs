@@ -6,6 +6,8 @@ const User = require("../models/User.model");
 const bcryptjs = require("bcryptjs");
 const saltRounds = 10;
 
+const { isLoggedIn, isLoggedOut } = require('../middleware/route-guard.js');
+
 /* GET home page */
 router.get("/", (req, res, next) => {
   res.render("index");
@@ -67,23 +69,15 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/user-profile", (req, res)=>{
+router.get("/user-profile", isLoggedIn, (req, res)=>{
   console.log(req.session)
   res.render("users/user-profile", {userInSession: req.session.currentUser})
 });
 
-router.get('/user-profile/main', (req,res)=>{
-  if (req.session.currentUser) {
-    res.render("users/main")
-  } else {
-    res.redirect("/login")
-  }
+router.get('/user-profile/main', isLoggedIn, (req,res)=>{
+  res.render("users/main")
 })
-router.get('/user-profile/private', (req,res)=>{
-  if (req.session.currentUser) {
-    res.render("users/private")
-  } else {
-    res.redirect("/login")
-  }
+router.get('/user-profile/private', isLoggedIn, (req,res)=>{
+  res.render("users/private")
 })
 module.exports = router;
