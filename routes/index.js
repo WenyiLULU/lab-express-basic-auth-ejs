@@ -13,7 +13,7 @@ router.get("/", (req, res, next) => {
   res.render("index");
 });
 
-router.get("/signup", (req, res) => {
+router.get("/signup", isLoggedOut, (req, res) => {
   res.render("auth/signup");
 });
 
@@ -30,13 +30,15 @@ router.post("/signup", async (req, res) => {
       email,
       password: passwordHashed,
     });
-    console.log("new user", newUser);
-    res.redirect("/");
+    //console.log("new user", newUser);
+    res.redirect("/login");
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       res.status(500).render("auth/signup", { errorMessage: error.message });
-    } else {
-      next(error);
+    } else if(error.code === 11000){
+      res.status(500).render("auth/signup", { errorMessage: "Username and email need to be unique." });
+    }else {
+      console.log(error);
     }
   }
 });
@@ -79,5 +81,12 @@ router.get('/user-profile/main', isLoggedIn, (req,res)=>{
 })
 router.get('/user-profile/private', isLoggedIn, (req,res)=>{
   res.render("users/private")
+})
+
+router.post('/logout', (req, res)=>{
+  req.session.destroy(err => {
+    if (err) next(err);
+    res.redirect('/');
+  });
 })
 module.exports = router;
